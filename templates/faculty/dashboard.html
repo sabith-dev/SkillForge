@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>Faculty Dashboard</h1>
+
+    <p>
+        Welcome, {{ request.user.username }}
+    </p>
+
+    <hr>
+
+    <div class="dashboard-cards">
+
+        <div>
+            <h2>{{ pending_count }}</h2>
+            <p>Pending Skills</p>
+        </div>
+
+        <div>
+            <h2>{{ approved_count }}</h2>
+            <p>Approved Skills</p>
+        </div>
+
+        <div>
+            <h2>{{ rejected_count }}</h2>
+            <p>Rejected Skills</p>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <h2>Pending Skill Verifications</h2>
+
+    {% if pending_skills %}
+
+        {% for student_skill in pending_skills %}
+
+            <div class="skill-card">
+
+                <h3>
+                    {{ student_skill.skill.name }}
+                </h3>
+
+                <p>
+                    <strong>Student:</strong>
+                    {{ student_skill.student.user.username }}
+                </p>
+
+                <p>
+                    <strong>Email:</strong>
+                    {{ student_skill.student.user.email }}
+                </p>
+
+                <p>
+                    <strong>Category:</strong>
+                    {{ student_skill.skill.get_category_display }}
+                </p>
+
+                <p>
+                    <strong>Level:</strong>
+                    {{ student_skill.get_level_display }}
+                </p>
+
+                <p>
+                    <strong>Experience:</strong>
+                    {{ student_skill.years_experience }} years
+                </p>
+
+                <div>
+
+                    <form
+                        method="POST"
+                        action="{% url 'verify_skill' student_skill.id 'approve' %}"
+                        style="display:inline;"
+                    >
+
+                        {% csrf_token %}
+
+                        <button type="submit">
+                            ✓ Approve
+                        </button>
+
+                    </form>
+
+
+                    <form
+                        method="POST"
+                        action="{% url 'verify_skill' student_skill.id 'reject' %}"
+                        style="display:inline;"
+                    >
+
+                        {% csrf_token %}
+
+                        <button type="submit">
+                            ✕ Reject
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <hr>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            No pending skill verifications.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

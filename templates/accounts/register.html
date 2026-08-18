@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up | SkillForge{% endblock %}
+
+{% block extra_head %}
+<style>
+    .auth-container {
+        min-height: calc(100vh - 70px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        position: relative;
+    }
+
+    .auth-container::before {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+        top: 20%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0.12;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .auth-card {
+        background: rgba(17, 24, 39, 0.6);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--surface-border);
+        border-radius: 20px;
+        padding: 40px;
+        width: 100%;
+        max-width: 440px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .auth-header {
+        text-align: center;
+    }
+
+    .auth-header h2 {
+        font-family: var(--font-display);
+        font-size: 32px;
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .auth-header p {
+        color: var(--text-secondary);
+        font-size: 14px;
+        margin-top: 6px;
+    }
+
+    .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group label {
+        color: var(--text-color);
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .form-group input, .form-group select {
+        background: rgba(11, 15, 25, 0.8);
+        border: 1px solid var(--surface-border);
+        padding: 12px 16px;
+        border-radius: 8px;
+        color: #fff;
+        font-family: var(--font-main);
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+    }
+
+    .error-alert {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .btn-auth {
+        background: var(--primary-color);
+        color: #fff;
+        padding: 14px;
+        border: 0;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background 0.3s;
+        box-shadow: 0 4px 14px var(--primary-glow);
+        text-align: center;
+    }
+
+    .btn-auth:hover {
+        background: var(--primary-hover);
+    }
+
+    .auth-footer {
+        text-align: center;
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+
+    .auth-footer a {
+        color: #818cf8;
+        font-weight: 600;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Get Started</h2>
+            <p>Create your verified SkillForge identity</p>
+        </div>
+
+        {% if error %}
+            <div class="error-alert">
+                ⚠ {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST" class="auth-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    required
+                    placeholder="Choose a username"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    placeholder="Enter your email"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    placeholder="Create a strong password"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="role">I am a...</label>
+                <select id="role" name="role" required>
+                    <option value="STUDENT">Student</option>
+                    <option value="FACULTY">Faculty Member</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-auth">
+                Create Account
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Already have an account? <a href="{% url 'accounts:login' %}">Log In</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Projects | SkillForge
+{% endblock %}
+
+{% block content %}
+
+<div class="projects-page">
+
+    <div class="page-header">
+        <div>
+            <h1>My Projects</h1>
+            <p>Showcase your work and technical experience.</p>
+        </div>
+
+        <a href="{% url 'students:project_create' %}">
+            + Add Project
+        </a>
+    </div>
+
+    {% if projects %}
+
+        <div class="projects-grid">
+
+            {% for project in projects %}
+
+                <div class="project-card">
+
+                    <h2>{{ project.name }}</h2>
+
+                    <p>
+                        {{ project.description }}
+                    </p>
+
+                    <p>
+                        <strong>Type:</strong>
+                        {{ project.get_project_type_display }}
+                    </p>
+
+                    <p>
+                        <strong>Technologies:</strong>
+                        {{ project.technologies }}
+                    </p>
+
+                    {% if project.role %}
+                    <p>
+                        <strong>Role:</strong>
+                        {{ project.role }}
+                    </p>
+                    {% endif %}
+
+                    <div class="project-links">
+
+                        {% if project.github_url %}
+                            <a
+                                href="{{ project.github_url }}"
+                                target="_blank"
+                            >
+                                GitHub
+                            </a>
+                        {% endif %}
+
+                        {% if project.live_demo_url %}
+                            <a
+                                href="{{ project.live_demo_url }}"
+                                target="_blank"
+                            >
+                                Live Demo
+                            </a>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <h2>No projects yet</h2>
+
+            <p>
+                Start building your career profile by adding your first project.
+            </p>
+
+            <a href="{% url 'students:project_create' %}">
+                Add Your First Project
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

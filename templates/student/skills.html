@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>My Skills</h1>
+
+    <hr>
+
+    <h2>Add Skill</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Add Skill
+        </button>
+
+    </form>
+
+    <hr>
+
+    <h2>My Skills</h2>
+
+    {% if skills %}
+
+        {% for student_skill in skills %}
+
+            <div>
+
+                <h3>
+                    {{ student_skill.skill.name }}
+                </h3>
+
+                <p>
+                    Category:
+                    {{ student_skill.skill.get_category_display }}
+                </p>
+
+                <p>
+                    Level:
+                    {{ student_skill.get_level_display }}
+                </p>
+
+                <p>
+                    Experience:
+                    {{ student_skill.years_experience }} years
+                </p>
+
+                <p>
+                    Status:
+
+                    {% if student_skill.verification_status == "approved" %}
+
+                        ✓ Verified
+
+                    {% elif student_skill.verification_status == "rejected" %}
+
+                        ✕ Rejected
+
+                    {% else %}
+
+                        ⏳ Pending
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+            <hr>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>You haven't added any skills yet.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

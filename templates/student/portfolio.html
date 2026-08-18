@@ -1,0 +1,646 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile.full_name }} | SkillForge Portfolio{% endblock %}
+
+{% block extra_head %}
+<style>
+    .portfolio-page {
+        max-width: 1100px;
+        margin: 50px auto;
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    /* Hero Profile Section */
+    .profile-hero {
+        background: rgba(17, 24, 39, 0.6);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--surface-border);
+        border-radius: 20px;
+        padding: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-hero::before {
+        content: "";
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+        top: -100px;
+        right: -100px;
+        opacity: 0.15;
+        pointer-events: none;
+    }
+
+    .profile-left {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .profile-img-placeholder {
+        width: 120px;
+        height: 120px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, var(--primary-color), #818cf8);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 48px;
+        box-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    .profile-meta h1 {
+        font-family: var(--font-display);
+        font-size: 36px;
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .profile-meta .title {
+        color: #818cf8;
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 4px;
+    }
+
+    .profile-meta .college {
+        color: var(--text-secondary);
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .social-icon {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--surface-border);
+        color: var(--text-secondary);
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .social-icon:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #9ca3af;
+    }
+
+    .profile-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 15px;
+    }
+
+    .score-badge-large {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        padding: 15px 25px;
+        border-radius: 16px;
+        text-align: center;
+    }
+
+    .score-badge-large strong {
+        display: block;
+        font-family: var(--font-display);
+        font-size: 40px;
+        color: var(--success-color);
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .score-badge-large span {
+        font-size: 11px;
+        color: var(--text-secondary);
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+
+    .btn-share {
+        background: var(--primary-color);
+        color: #fff;
+        border: 0;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-share:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+    }
+
+    /* Grid Layout */
+    .portfolio-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+    }
+
+    .portfolio-column {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .section-card {
+        background: var(--surface-color);
+        border: 1px solid var(--surface-border);
+        border-radius: 16px;
+        padding: 30px;
+    }
+
+    .section-card h2 {
+        font-family: var(--font-display);
+        color: #fff;
+        font-size: 20px;
+        font-weight: 700;
+        border-bottom: 1px solid var(--surface-border);
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .bio-text {
+        color: var(--text-secondary);
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    /* Skills Grid */
+    .skills-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .skill-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .skill-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .skill-name {
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .skill-bar {
+        height: 6px;
+        background: #1f2937;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .skill-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary-color), #818cf8);
+        border-radius: 4px;
+    }
+
+    /* Projects Grid */
+    .projects-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .project-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--surface-border);
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .project-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .project-title {
+        color: #fff;
+        font-size: 17px;
+        font-weight: 600;
+    }
+
+    .project-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 4px;
+    }
+
+    .tech-tag {
+        background: rgba(79, 70, 229, 0.1);
+        border: 1px solid rgba(79, 70, 229, 0.15);
+        color: #a5b4fc;
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 500;
+    }
+
+    .project-desc {
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .project-links {
+        display: flex;
+        gap: 15px;
+    }
+
+    .project-link {
+        font-size: 12px;
+        color: #818cf8;
+        font-weight: 600;
+    }
+
+    .project-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Generic Lists */
+    .timeline-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .timeline-item {
+        border-left: 2px solid var(--surface-border);
+        padding-left: 20px;
+        position: relative;
+    }
+
+    .timeline-item::before {
+        content: "";
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        left: -6px;
+        top: 6px;
+    }
+
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .timeline-title {
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .timeline-date {
+        color: var(--text-muted);
+        font-size: 12px;
+    }
+
+    .timeline-org {
+        color: #818cf8;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .timeline-desc {
+        color: var(--text-secondary);
+        font-size: 13px;
+        line-height: 1.5;
+        margin-top: 6px;
+    }
+
+    /* Toast message */
+    .toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #10b981;
+        color: #fff;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s;
+        z-index: 10000;
+    }
+
+    .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    @media (max-width: 800px) {
+        .profile-hero {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .profile-left {
+            flex-direction: column;
+            align-items: center;
+        }
+        .profile-right {
+            align-items: center;
+        }
+        .portfolio-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="portfolio-page">
+    
+    <!-- Hero Profile -->
+    <div class="profile-hero">
+        <div class="profile-left">
+            <div class="profile-img-placeholder">
+                {{ profile.full_name|slice:":1"|upper }}
+            </div>
+            <div class="profile-meta">
+                <h1>{{ profile.full_name }}</h1>
+                <div class="title">{{ profile.preferred_job_roles|default:"Software Engineer" }}</div>
+                <div class="college">🏫 {{ profile.college|default:"SkillForge Academy" }} • {{ profile.department|default:"Computer Science" }}</div>
+                
+                <div class="social-links">
+                    {% if profile.github %}
+                        <a href="{{ profile.github }}" target="_blank" class="social-icon">💻 GitHub</a>
+                    {% endif %}
+                    {% if profile.linkedin %}
+                        <a href="{{ profile.linkedin }}" target="_blank" class="social-icon">🔗 LinkedIn</a>
+                    {% endif %}
+                    {% if profile.resume %}
+                        <a href="{{ profile.resume.url }}" target="_blank" class="social-icon">📄 Resume</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-right">
+            <div class="score-badge-large">
+                <strong>{{ career_score.total }}</strong>
+                <span>CAREER SCORE</span>
+            </div>
+            <button class="btn-share" onclick="copyPortfolioUrl()">
+                🔗 Share Portfolio
+            </button>
+        </div>
+    </div>
+
+    <!-- Grid content -->
+    <div class="portfolio-grid">
+        
+        <!-- Left Column -->
+        <div class="portfolio-column">
+            
+            <!-- About Me -->
+            <div class="section-card">
+                <h2>👤 About Me</h2>
+                <div class="bio-text">
+                    {{ profile.bio|default:"Passionate software developer focused on building modern web applications and expanding technical expertise." }}
+                </div>
+            </div>
+
+            <!-- Projects -->
+            <div class="section-card">
+                <h2>▣ Verified Projects</h2>
+                <div class="projects-list">
+                    {% if projects %}
+                        {% for project in projects %}
+                            <div class="project-card">
+                                <div class="project-card-header">
+                                    <div>
+                                        <div class="project-title">{{ project.name }}</div>
+                                        <div class="project-tags">
+                                            {% for tech in project.tech_list %}
+                                                <span class="tech-tag">{{ tech }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <span class="verified-badge">✓ Verified</span>
+                                </div>
+                                <div class="project-desc">{{ project.description }}</div>
+                                <div class="project-links">
+                                    {% if project.github_url %}
+                                        <a href="{{ project.github_url }}" target="_blank" class="project-link">GitHub</a>
+                                    {% endif %}
+                                    {% if project.live_demo_url %}
+                                        <a href="{{ project.live_demo_url }}" target="_blank" class="project-link">Live Demo</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="bio-text">No verified projects to display.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Experience / Internships -->
+            <div class="section-card">
+                <h2>💼 Verified Internships</h2>
+                <div class="timeline-list">
+                    {% if internships %}
+                        {% for internship in internships %}
+                            <div class="timeline-item">
+                                <div class="timeline-header">
+                                    <div class="timeline-title">{{ internship.role }}</div>
+                                    <div class="timeline-date">{{ internship.start_date|date:"M Y" }} - {{ internship.end_date|date:"M Y"|default:"Present" }}</div>
+                                </div>
+                                <div class="timeline-org">{{ internship.company_name }}</div>
+                                <div class="timeline-desc">{{ internship.description }}</div>
+                                {% if internship.skill_list %}
+                                    <div class="project-tags" style="margin-top: 10px;">
+                                        {% for skill in internship.skill_list %}
+                                            <span class="tech-tag">{{ skill }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="bio-text">No verified internships listed.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Research & Seminars -->
+            {% if research_papers or seminars %}
+            <div class="section-card">
+                <h2>🚀 Research & Presentations</h2>
+                <div class="timeline-list">
+                    {% for paper in research_papers %}
+                        <div class="timeline-item">
+                            <div class="timeline-header">
+                                <div class="timeline-title">{{ paper.title }}</div>
+                                <div class="timeline-date">{{ paper.publication_date|date:"M Y" }}</div>
+                            </div>
+                            <div class="timeline-org">Published: {{ paper.publication }}</div>
+                            <div class="timeline-desc">Authors: {{ paper.authors }}</div>
+                            {% if paper.paper_url %}
+                                <a href="{{ paper.paper_url }}" target="_blank" class="project-link" style="margin-top: 8px; display: inline-block;">View Paper</a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    {% for seminar in seminars %}
+                        <div class="timeline-item">
+                            <div class="timeline-header">
+                                <div class="timeline-title">Topic: {{ seminar.topic }}</div>
+                                <div class="timeline-date">{{ seminar.date|date:"d M Y" }}</div>
+                            </div>
+                            <div class="timeline-org">Institution: {{ seminar.institution }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="portfolio-column">
+            
+            <!-- Verified Skills -->
+            <div class="section-card">
+                <h2>⚡ Verified Skills</h2>
+                <div class="skills-list">
+                    {% if skills %}
+                        {% for s in skills %}
+                            <div class="skill-item">
+                                <div class="skill-header">
+                                    <span class="skill-name">{{ s.skill.name }} <span class="verified-badge" style="font-size: 9px; padding: 1px 5px;">✓</span></span>
+                                    <span style="color: var(--text-secondary);">{{ s.get_level_display }}</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-bar-fill" style="width: {% if s.level == 'expert' %}100%{% elif s.level == 'advanced' %}85%{% elif s.level == 'intermediate' %}60%{% else %}35%{% endif %}"></div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="bio-text">No verified skills to display.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Certifications -->
+            <div class="section-card">
+                <h2>📜 Verified Certifications</h2>
+                <div class="timeline-list">
+                    {% if certificates %}
+                        {% for cert in certificates %}
+                            <div class="timeline-item">
+                                <div class="timeline-header">
+                                    <div class="timeline-title" style="font-size: 14px;">{{ cert.name }}</div>
+                                    <div class="timeline-date" style="font-size: 11px;">{{ cert.issue_date|date:"M Y" }}</div>
+                                </div>
+                                <div class="timeline-org" style="font-size: 12px;">{{ cert.issuing_organization }}</div>
+                                {% if cert.credential_url %}
+                                    <a href="{{ cert.credential_url }}" target="_blank" class="project-link" style="font-size: 11px; margin-top: 6px; display: inline-block;">View Credential</a>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="bio-text">No verified certifications to display.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            {% if achievements %}
+            <div class="section-card">
+                <h2>🏆 Achievements & Honors</h2>
+                <div class="timeline-list">
+                    {% for a in achievements %}
+                        <div class="timeline-item">
+                            <div class="timeline-header">
+                                <div class="timeline-title" style="font-size: 14px;">{{ a.title }}</div>
+                                <div class="timeline-date" style="font-size: 11px;">{{ a.issue_date|date:"M Y" }}</div>
+                            </div>
+                            <div class="timeline-org" style="font-size: 12px;">Issuer: {{ a.issuer }}</div>
+                            <div class="timeline-desc" style="font-size: 12px;">{{ a.description }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+
+<!-- Copy Success Toast -->
+<div id="toast" class="toast">
+    ✓ Portfolio URL copied to clipboard!
+</div>
+
+<script>
+    function copyPortfolioUrl() {
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            const toast = document.getElementById("toast");
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+        });
+    }
+</script>
+{% endblock %}

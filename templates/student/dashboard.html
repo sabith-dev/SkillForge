@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Student Dashboard | SkillForge
+{% endblock %}
+
+{% block content %}
+
+<div
+    id="student-dashboard"
+    data-username="{{ user.username }}"
+    data-role="{{ user.role }}"
+>
+
+    <div class="dashboard-stats">
+
+        <div class="stat-card">
+            <h3>{{ total_skills }}</h3>
+            <p>Total Skills</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ verified_skills }}</h3>
+            <p>Verified Skills</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ pending_skills }}</h3>
+            <p>Pending Verification</p>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<!-- Vite React Refresh Preamble -->
+<script type="module">
+    import RefreshRuntime from "http://localhost:5173/@react-refresh";
+
+    RefreshRuntime.injectIntoGlobalHook(window);
+
+    window.$RefreshReg$ = () => {};
+    window.$RefreshSig$ = () => (type) => type;
+
+    window.__vite_plugin_react_preamble_installed__ = true;
+</script>
+
+<!-- React Application -->
+<script
+    type="module"
+    src="http://localhost:5173/src/main.jsx">
+</script>
+
+{% endblock %}
