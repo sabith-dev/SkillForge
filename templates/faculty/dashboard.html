@@ -74,7 +74,7 @@
 
                     <form
                         method="POST"
-                        action="{% url 'verify_skill' student_skill.id 'approve' %}"
+                        action="{% url 'faculty:verify_skill' student_skill.id 'approve' %}"
                         style="display:inline;"
                     >
 
@@ -89,7 +89,7 @@
 
                     <form
                         method="POST"
-                        action="{% url 'verify_skill' student_skill.id 'reject' %}"
+                        action="{% url 'faculty:verify_skill' student_skill.id 'reject' %}"
                         style="display:inline;"
                     >
 

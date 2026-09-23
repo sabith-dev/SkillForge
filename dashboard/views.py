@@ -61,8 +61,11 @@ def populate_default_skills():
         )
 
 
-@login_required
 def dashboard(request):
+    # Public home / landing page for anonymous visitors
+    if not request.user.is_authenticated:
+        return render(request, "dashboard/landing.html")
+
     user = request.user
     
     # Auto-populate default skills if empty

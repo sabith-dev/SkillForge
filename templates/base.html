@@ -160,7 +160,13 @@
             </a>
             <div class="nav-links">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="btn-nav">Dashboard</a>
+                    {% if user.role == "STUDENT" %}
+                        <a href="{% url 'students:dashboard' %}" class="btn-nav">Dashboard</a>
+                    {% elif user.role == "FACULTY" %}
+                        <a href="{% url 'faculty:dashboard' %}" class="btn-nav">Dashboard</a>
+                    {% else %}
+                        <a href="{% url 'dashboard' %}" class="btn-nav">Dashboard</a>
+                    {% endif %}
                     <a href="{% url 'accounts:logout' %}" class="btn-nav-outline">Log Out</a>
                 {% else %}
                     <a href="{% url 'accounts:login' %}" class="btn-nav-outline">Log In</a>

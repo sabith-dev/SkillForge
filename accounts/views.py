@@ -6,9 +6,20 @@ from students.models import StudentProfile
 from faculty.models import FacultyProfile
 
 
+def dashboard_url_for(user):
+    """Return the app-specific dashboard URL name for a user's role."""
+    if user.is_superuser or getattr(user, "role", None) == User.Role.ADMIN:
+        return "dashboard"
+    if getattr(user, "role", None) == User.Role.STUDENT:
+        return "students:dashboard"
+    if getattr(user, "role", None) == User.Role.FACULTY:
+        return "faculty:dashboard"
+    return "dashboard"
+
+
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect("dashboard")
+        return redirect(dashboard_url_for(request.user))
 
     error_message = None
     if request.method == "POST":
@@ -30,7 +41,7 @@ def login_view(request):
             elif user.role == User.Role.FACULTY:
                 FacultyProfile.objects.get_or_create(user=user)
                 
-            return redirect("dashboard")
+            return redirect(dashboard_url_for(user))
         else:
             error_message = "Invalid username or password."
 
@@ -39,7 +50,7 @@ def login_view(request):
 
 def register_view(request):
     if request.user.is_authenticated:
-        return redirect("dashboard")
+        return redirect(dashboard_url_for(request.user))
 
     error_message = None
     if request.method == "POST":
@@ -69,7 +80,7 @@ def register_view(request):
             authenticated_user = authenticate(request, username=username, password=password)
             if authenticated_user:
                 login(request, authenticated_user)
-            return redirect("dashboard")
+            return redirect(dashboard_url_for(user))
         except IntegrityError:
             error_message = "Username already exists."
         except Exception as e:
